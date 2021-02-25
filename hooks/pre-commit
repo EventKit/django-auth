@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+echo "Running Linters..."
+make black
+make flake8
+make pylint
+
+echo "Running tests..."
+make test
