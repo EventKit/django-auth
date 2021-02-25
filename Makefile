@@ -14,3 +14,10 @@ lint: black flake8 pylint
 
 test:
 	coverage run -m pytest
+
+install-hooks:
+ifeq ($(detected_OS),Windows)
+	cp hooks/pre-commit .git/hooks/pre-commit
+else
+	ln -s -f ${CURDIR}/hooks/pre-commit ${CURDIR}/.git/hooks/pre-commit
+endif

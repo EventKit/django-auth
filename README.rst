@@ -12,7 +12,7 @@ Quick start
 
     INSTALLED_APPS = [
         ...
-        'auth',
+        "auth.apps.AuthConfig",
     ]
 
 2. Include the auth URLconf in your project urls.py like this::
