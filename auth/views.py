@@ -57,7 +57,7 @@ def callback(request):
             logger.info('User "{0}" has logged in successfully'.format(get_id(user)))
             if state:
                 return redirect(base64.b64decode(state).decode())
-            return redirect("dashboard")
+            return redirect(settings.OAUTH_DEFAULT_REDIRECT)
         logger.error("User could not be logged in.")
         return JsonResponse({"error": "User could not be logged in"}, status=401,)
     except (
