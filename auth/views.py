@@ -20,6 +20,13 @@ def oauth(request):
     """
     :return: A redirection to the OAuth server (OAUTH_AUTHORIZATION_URL) provided in the settings
     """
+    authorization_header = request.headers.get("Authorization")
+    if authorization_header:
+        access_token = authorization_header.split(":")[1].strip()
+        user = fetch_user_from_token(access_token)
+        if user:
+            return login_user_with_access_token(request, user)
+
     if not getattr(settings, "OAUTH_AUTHORIZATION_URL", None):
         logger.error("OAUTH_AUTHORIZATION_URL is not set.")
         return JsonResponse(
@@ -51,13 +58,8 @@ def callback(request):
     try:
         access_token = request_access_token(request.GET.get("code"))
         user = fetch_user_from_token(access_token)
-        state = request.GET.get("state")
         if user:
-            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-            logger.info('User "{0}" has logged in successfully'.format(get_id(user)))
-            if state:
-                return redirect(base64.b64decode(state).decode())
-            return redirect("dashboard")
+            return login_user_with_access_token(request, user)
         logger.error("User could not be logged in.")
         return JsonResponse({"error": "User could not be logged in"}, status=401,)
     except (
@@ -72,3 +74,12 @@ def callback(request):
         if getattr(settings, "DEBUG"):
             raise
         return JsonResponse({"error": "User could not be logged in"}, status=500,)
+
+
+def login_user_with_access_token(request, user):
+    state = request.GET.get("state")
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    logger.info('User "{0}" has logged in successfully'.format(get_id(user)))
+    if state:
+        return redirect(base64.b64decode(state).decode())
+    return redirect(settings.OAUTH_DEFAULT_REDIRECT)

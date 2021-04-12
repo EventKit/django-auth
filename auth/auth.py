@@ -93,7 +93,7 @@ def get_user(user_data, orig_data=None):
             authenticate(username=identification)
             logger.error(
                 "The user data provided could not be used to create a user, "
-                "it most likely caused by OAUTH_PROFILE_SCHEMA containing an invalid key, or a change"
+                "it most likely caused by OAUTH_PROFILE_SCHEMA containing an invalid key, or a change "
                 "to their identification key."
             )
             logger.error(f"USER DATA: {user_data}")
