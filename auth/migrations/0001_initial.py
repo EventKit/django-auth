@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("django_auth", "0000_fix_label_name")
     ]
 
     operations = [
@@ -37,6 +38,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"db_table": "auth_oauth", "managed": True,},
+            # this name intentionally doesn't match table name to fix state for legacy users
+            options={"db_table": "auth_oauth_old", "managed": True,},
         ),
     ]
