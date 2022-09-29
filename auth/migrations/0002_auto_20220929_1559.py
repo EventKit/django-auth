@@ -14,11 +14,16 @@ class Migration(migrations.Migration):
             cur.execute("SELECT tablename FROM pg_tables WHERE tablename = %s", ['auth_oauth'])
             row = cur.fetchone()
             if not row:
-                cur.execute("ALTER TABLE auth_oauth_old RENAME TO auth_oauth;")
+                # There was no auth_oauth table this is a new installation.
+                cur.execute("ALTER TABLE auth_oauth_new RENAME TO auth_oauth;")
+            else:
+                # This is an old installation, the correct table and data already exists so delete the unused stuff.
+                cur.execute("DROP TABLE IF EXISTS auth_oauth_new;")
+                cur.execute("DELETE FROM django_migrations WHERE app=%s;", ['django_auth.auth'])
 
     def revert_table(apps, schema_editor):
         with connection.cursor() as cur:
-            cur.execute("ALTER TABLE IF EXISTS auth_oauth RENAME TO auth_oauth_old;")
+            cur.execute("ALTER TABLE IF EXISTS auth_oauth RENAME TO auth_oauth_new;")
 
     operations = [
         migrations.SeparateDatabaseAndState(
