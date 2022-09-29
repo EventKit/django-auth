@@ -9,9 +9,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
@@ -37,6 +35,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"db_table": "auth_oauth", "managed": True,},
+            # this name intentionally doesn't match table name to fix state for legacy users
+            options={"db_table": "auth_oauth_new", "managed": True,},
         ),
     ]
